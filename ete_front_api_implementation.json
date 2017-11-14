@@ -1,0 +1,206 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "param0": {
+            "type": "string"
+        },
+
+        "param1": {
+            "type": "string"
+        },
+
+        "param2": {
+            "type": "string"
+        },
+
+        "param3": {
+            "type": "string"
+        },
+
+        "param4": {
+            "type": "string"
+        },
+
+        "param5": {
+            "type": "string"
+        },
+
+        "param6": {
+            "type": "string"
+        },
+
+        "templatesBaseUrl": {
+            "type": "string",
+            "metadata": {
+                "description": "Linked Templates base url"
+            },
+            "defaultValue": "https://raw.githubusercontent.com/t-haunzwickl/arm/master/nestedtemplates/"
+        }
+    },
+    "variables": {
+
+        "prefix": "[concat(parameters('param0'), '-', parameters('param1'), '-', parameters('param2'), '-', parameters('param3'), '-', parameters('param4'), '-', parameters('param5'))]",
+        "prefix_full": "[concat(variables('prefix'), '-', parameters('param6'))]",
+
+        "artifacts": {
+            "logicAppUrl": "[concat(parameters('templatesBaseUrl'), '/logicApp.json')]"
+        },
+              
+        "resourceGroups": {
+            "region1Green": "[concat(variables('prefix_full'), '-pri-grn-rg')]",
+            "region2Green": "[concat(variables('prefix_full'), '-sec-grn-rg')]",
+            "region1Blue": "[concat(variables('prefix_full'), '-pri-blu-rg')]"
+        },
+
+        "logicApps": [
+            {
+                "name": "[concat(variables('prefix_full'), '-v1-res-get-pri-grn-lap')]",
+                "resourceGroup": "[variables('resourceGroups').region1Green]"
+            },
+            {
+                "name": "[concat(variables('prefix_full'), '-v1-res-pst-pri-grn-lap')]",
+                "resourceGroup": "[variables('resourceGroups').region1Green]"
+            },
+            {
+                "name": "[concat(variables('prefix_full'), '-v1-res-pst-sbq-pri-grn-lap')]",
+                "resourceGroup": "[variables('resourceGroups').region1Green]"
+            },
+            {
+                "name": "[concat(variables('prefix_full'), '-v1-res-pst-sbt-pri-grn-lap')]",
+                "resourceGroup": "[variables('resourceGroups').region1Green]"
+            },
+            {
+                "name": "[concat(variables('prefix_full'), '-v1-res-put-pri-grn-lap')]",
+                "resourceGroup": "[variables('resourceGroups').region1Green]"
+            },
+            {
+                "name": "[concat(variables('prefix_full'), '-v1-res-del-pri-grn-lap')]",
+                "resourceGroup": "[variables('resourceGroups').region1Green]"
+            },
+            {
+                "name": "[concat(variables('prefix_full'), '-v1-res-hea-pri-grn-lap')]",
+                "resourceGroup": "[variables('resourceGroups').region1Green]"
+            },
+            {
+                "name": "[concat(variables('prefix_full'), '-v1-res-opt-pri-grn-lap')]",
+                "resourceGroup": "[variables('resourceGroups').region1Green]"
+            },
+            {
+                "name": "[concat(variables('prefix_full'), '-v1-res-pat-pri-grn-lap')]",
+                "resourceGroup": "[variables('resourceGroups').region1Green]"
+            },
+            {
+                "name": "[concat(variables('prefix_full'), '-v1-res-trc-pri-grn-lap')]",
+                "resourceGroup": "[variables('resourceGroups').region1Green]"
+            },
+
+            {
+                "name": "[concat(variables('prefix_full'), '-v1-res-get-sec-grn-lap')]",
+                "resourceGroup": "[variables('resourceGroups').region2Green]"
+            },
+            {
+                "name": "[concat(variables('prefix_full'), '-v1-res-pst-sec-grn-lap')]",
+                "resourceGroup": "[variables('resourceGroups').region2Green]"
+            },
+            {
+                "name": "[concat(variables('prefix_full'), '-v1-res-pst-sbq-sec-grn-lap')]",
+                "resourceGroup": "[variables('resourceGroups').region2Green]"
+            },
+            {
+                "name": "[concat(variables('prefix_full'), '-v1-res-pst-sbt-sec-grn-lap')]",
+                "resourceGroup": "[variables('resourceGroups').region2Green]"
+            },
+            {
+                "name": "[concat(variables('prefix_full'), '-v1-res-put-sec-grn-lap')]",
+                "resourceGroup": "[variables('resourceGroups').region2Green]"
+            },
+            {
+                "name": "[concat(variables('prefix_full'), '-v1-res-del-sec-grn-lap')]",
+                "resourceGroup": "[variables('resourceGroups').region2Green]"
+            },
+            {
+                "name": "[concat(variables('prefix_full'), '-v1-res-hea-sec-grn-lap')]",
+                "resourceGroup": "[variables('resourceGroups').region2Green]"
+            },
+            {
+                "name": "[concat(variables('prefix_full'), '-v1-res-opt-sec-grn-lap')]",
+                "resourceGroup": "[variables('resourceGroups').region2Green]"
+            },
+            {
+                "name": "[concat(variables('prefix_full'), '-v1-res-pat-sec-grn-lap')]",
+                "resourceGroup": "[variables('resourceGroups').region2Green]"
+            },
+            {
+                "name": "[concat(variables('prefix_full'), '-v1-res-trc-sec-grn-lap')]",
+                "resourceGroup": "[variables('resourceGroups').region2Green]"
+            },
+
+            {
+                "name": "[concat(variables('prefix_full'), '-v1-res-get-pri-blu-lap')]",
+                "resourceGroup": "[variables('resourceGroups').region1Blue]"
+            },
+            {
+                "name": "[concat(variables('prefix_full'), '-v1-res-pst-pri-blu-lap')]",
+                "resourceGroup": "[variables('resourceGroups').region1Blue]"
+            },
+            {
+                "name": "[concat(variables('prefix_full'), '-v1-res-pst-sbq-pri-blu-lap')]",
+                "resourceGroup": "[variables('resourceGroups').region1Blue]"
+            },
+            {
+                "name": "[concat(variables('prefix_full'), '-v1-res-pst-sbt-pri-blu-lap')]",
+                "resourceGroup": "[variables('resourceGroups').region1Blue]"
+            },
+            {
+                "name": "[concat(variables('prefix_full'), '-v1-res-put-pri-blu-lap')]",
+                "resourceGroup": "[variables('resourceGroups').region1Blue]"
+            },
+            {
+                "name": "[concat(variables('prefix_full'), '-v1-res-del-pri-blu-lap')]",
+                "resourceGroup": "[variables('resourceGroups').region1Blue]"
+            },
+            {
+                "name": "[concat(variables('prefix_full'), '-v1-res-hea-pri-blu-lap')]",
+                "resourceGroup": "[variables('resourceGroups').region1Blue]"
+            },
+            {
+                "name": "[concat(variables('prefix_full'), '-v1-res-opt-pri-blu-lap')]",
+                "resourceGroup": "[variables('resourceGroups').region1Blue]"
+            },
+            {
+                "name": "[concat(variables('prefix_full'), '-v1-res-pat-pri-blu-lap')]",
+                "resourceGroup": "[variables('resourceGroups').region1Blue]"
+            },
+            {
+                "name": "[concat(variables('prefix_full'), '-v1-res-trc-pri-blu-lap')]",
+                "resourceGroup": "[variables('resourceGroups').region1Blue]"
+            }
+        ]        
+    },
+    "resources": [
+        {
+            "name": "[variables('logicApps')[copyIndex()].name]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2017-05-10",
+            "comments": "This resource will create a Logic App",
+            "copy": {
+                "name": "LogicAppsLoop",
+                "count": "[length(variables('logicApps'))]"
+            },
+            "resourceGroup": "[variables('logicApps')[copyIndex()].resourceGroup]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('artifacts').logicAppUrl]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "name": {
+                        "value": "[variables('logicApps')[copyIndex()].name]"
+                    }
+                }
+            }
+        }
+    ]
+}

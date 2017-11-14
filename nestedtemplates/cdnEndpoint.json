@@ -1,0 +1,62 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "name": {
+            "type": "string"
+        },
+        "cdnEndpointName": {
+            "type": "string"
+        },
+        "siteName": {
+            "type": "string"
+        },
+        "originPath": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "optimizationType": {
+            "type": "string",
+            "defaultValue": "GeneralWebDelivery",
+            "allowedValues": [
+                "GeneralWebDelivery",
+                "DynamicSiteAcceleration"
+            ]
+        },
+        "probePath": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": ""
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Cdn/profiles/endpoints",
+            "apiVersion": "2017-04-02",
+            "name": "[concat(parameters('cdnEndpointName'), '/', parameters('name'))]",
+            "location": "[if(empty(parameters('location')), resourceGroup().location, parameters('location'))]",
+            "properties": {
+                "originHostHeader": "[concat(parameters('siteName'), '.azurewebsites.net')]",
+                "originPath": "[if(empty(parameters('originPath')), json('null'), parameters('originPath'))]",
+                "isHttpAllowed": true,
+                "isHttpsAllowed": true,
+                "optimizationType": "[parameters('optimizationType')]",
+                "probePath": "[if(equals(parameters('optimizationType'), 'DynamicSiteAcceleration'), parameters('probePath'), json('null'))]",
+                "origins": [
+                    {
+                        "name": "[concat(parameters('siteName'), '-azurewebsites-net')]",
+                        "properties": {
+                            "hostName": "[concat(parameters('siteName'), '.azurewebsites.net')]",
+                            "httpPort": 80,
+                            "httpsPort": 443
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+}

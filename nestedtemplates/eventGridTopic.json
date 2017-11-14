@@ -1,0 +1,28 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "name": {
+            "type": "string"
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": ""
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "apiVersion": "2017-06-15-preview",
+            "name": "[parameters('name')]",
+            "type": "Microsoft.EventGrid/topics",
+            "location": "West US 2",
+            /*"tags": {
+                "displayName": "EventGrid"
+            },*/
+            "properties": {
+                "name": "[parameters('name')]"
+            }
+        }
+    ]
+}

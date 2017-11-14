@@ -1,0 +1,77 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "param0": {
+            "type": "string"
+        },
+
+        "param1": {
+            "type": "string"
+        },
+
+        "param2": {
+            "type": "string"
+        },
+
+        "param3": {
+            "type": "string"
+        },
+
+        "param4": {
+            "type": "string"
+        },
+
+        "param5": {
+            "type": "string"
+        },
+
+        "param6": {
+            "type": "string"
+        },
+
+        "param7": {
+            "type": "string"
+        },
+
+        "templatesBaseUrl": {
+            "type": "string",
+            "metadata": {
+                "description": "Linked Templates base url"
+            },
+            "defaultValue": "https://raw.githubusercontent.com/t-haunzwickl/arm/master/nestedtemplates/"
+        }
+    },
+    "variables": {
+        "prefix": "[concat(parameters('param0'), '-', parameters('param1'), '-', parameters('param2'), '-', parameters('param3'), '-', parameters('param4'), '-', parameters('param5'))]",
+        "prefix_full": "[concat(variables('prefix'), '-', parameters('param6'))]",
+
+        "artifacts": {
+            "cosmosDBUrl": "[concat(parameters('templatesBaseUrl'), '/cosmosDB.json')]",
+        },            
+       
+        "cosmosDBResourceGroupName": "[concat(variables('prefix_full'), '-rg')]",
+        "cosmosDBName": "[concat(variables('prefix_full'), '-cdb')]"
+    },
+    "resources": [
+        {
+            "name": "[variables('cosmosDBName')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2017-05-10",
+            "comments": "This resource will create a CosmosDB",
+            "resourceGroup": "[variables('cosmosDBResourceGroupName')]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('artifacts').cosmosDBUrl]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "name": {
+                        "value": "[variables('cosmosDBName')]"
+                    }
+                }
+            }
+        }
+    ]
+}

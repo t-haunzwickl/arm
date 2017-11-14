@@ -1,0 +1,43 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "name": {
+            "type": "string"
+        },
+        "skuName": {
+            "type": "string",
+            "defaultValue": "F1",
+            "allowedValues": [
+                "F1"
+            ]
+        },
+        "skuTier": {
+            "type": "string",
+            "defaultValue": "Free",
+            "allowedValues": [
+                "Free"
+            ]
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": ""
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "apiVersion": "2016-09-01",
+            "name": "[parameters('name')]",
+            "type": "Microsoft.Web/serverfarms",
+            "location": "[if(empty(parameters('location')), resourceGroup().location, parameters('location'))]",
+            "properties": {
+                "name": "[parameters('name')]"
+            },
+            "sku": {
+                "name": "[parameters('skuName')]",
+                "tier": "[parameters('skuTier')]"
+            }
+        }
+    ]
+}

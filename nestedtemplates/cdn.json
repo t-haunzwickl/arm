@@ -1,0 +1,33 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "name": {
+            "type": "string"
+        },
+        "sku": {
+            "type": "string",
+            "defaultValue": "Standard_Akamai",
+            "allowedValues": [
+                "Standard_Akamai",
+                "Premium_Verizon"
+            ]
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": ""
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "name": "[parameters('name')]",
+            "type": "Microsoft.Cdn/profiles",
+            "apiVersion": "2017-04-02",
+            "location": "[if(empty(parameters('location')), resourceGroup().location, parameters('location'))]",
+            "sku": {
+                "name": "[parameters('sku')]"
+            }
+        }
+    ]
+}

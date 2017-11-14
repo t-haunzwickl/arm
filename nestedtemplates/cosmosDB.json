@@ -1,0 +1,33 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "name": {
+            "type": "string"
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": ""
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "apiVersion": "2015-04-08",
+            "kind": "GlobalDocumentDB",
+            "type": "Microsoft.DocumentDB/databaseAccounts",
+            "name": "[parameters('name')]",
+            "location": "[if(empty(parameters('location')), resourceGroup().location, parameters('location'))]",
+            "properties": {
+                "name": "[parameters('name')]",
+                "databaseAccountOfferType": "Standard",
+                "locations": [
+                    {
+                        "locationName": "[if(empty(parameters('location')), resourceGroup().location, parameters('location'))]",
+                        "failoverPriority": 0
+                    }
+                ]
+            }
+        }
+    ]
+}

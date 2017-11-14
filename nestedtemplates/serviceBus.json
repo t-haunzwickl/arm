@@ -1,0 +1,58 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "name": {
+            "type": "string"
+        },
+        "serviceBusTopicName": {
+            "type": "string"
+        },
+        "serviceBusQueueName": {
+            "type": "string"
+        },
+        "sku": {
+            "type": "string",
+            "defaultValue": "Standard",
+            "allowedValues": [
+                "Standard"
+            ]
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": ""
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "name": "[parameters('name')]",
+            "type": "Microsoft.ServiceBus/namespaces",
+            "apiVersion": "2017-04-01",
+            "location": "[if(empty(parameters('location')), resourceGroup().location, parameters('location'))]",
+            "sku": {
+                "name": "[parameters('sku')]"
+            }
+        },
+        {
+            "name": "[concat(parameters('name'), '/', parameters('serviceBusTopicName'))]",
+            "type": "Microsoft.ServiceBus/namespaces/topics",
+            "apiVersion": "2017-04-01",
+            "location": "[parameters('location')]",
+            "properties": {},
+            "dependsOn": [
+                "[resourceId('Microsoft.ServiceBus/namespaces', parameters('name'))]"
+            ]
+        },
+        {
+            "name": "[concat(parameters('name'), '/', parameters('serviceBusQueueName'))]",
+            "type": "Microsoft.ServiceBus/namespaces/queues",
+            "apiVersion": "2017-04-01",
+            "location": "[parameters('location')]",
+            "properties": {},
+            "dependsOn": [
+                "[resourceId('Microsoft.ServiceBus/namespaces', parameters('name'))]"
+            ]
+        }
+    ]
+}

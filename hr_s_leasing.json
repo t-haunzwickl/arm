@@ -1,0 +1,303 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "prefix": {
+            "type": "string"
+        },
+
+        "templatesBaseUrl": {
+            "type": "string",
+            "metadata": {
+                "description": "Linked Templates base url"
+            },
+            "defaultValue": "https://raw.githubusercontent.com/t-haunzwickl/arm/master/nestedtemplates/"
+        }
+    },
+    "variables": {
+        "artifacts": {
+            "appServicePlanUrl": "[concat(parameters('templatesBaseUrl'), '/appServicePlan.json')]",
+            "cdnUrl": "[concat(parameters('templatesBaseUrl'), '/cdn.json')]",
+            "cdnEndpointUrl": "[concat(parameters('templatesBaseUrl'), '/cdnEndpoint.json')]",
+            "cosmosDBUrl": "[concat(parameters('templatesBaseUrl'), '/cosmosDB.json')]",
+            "serviceBusUrl": "[concat(parameters('templatesBaseUrl'), '/serviceBus.json')]",
+            "webAppUrl": "[concat(parameters('templatesBaseUrl'), '/webApp.json')]",
+            "functionAppUrl": "[concat(parameters('templatesBaseUrl'), '/functionApp.json')]",
+            "storageAccountUrl": "[concat(parameters('templatesBaseUrl'), '/storageAccount.json')]",
+            "eventGridTopicUrl": "[concat(parameters('templatesBaseUrl'), '/eventGridTopic.json')]",
+            "logicAppUrl": "[concat(parameters('templatesBaseUrl'), '/logicApp.json')]"
+        },
+              
+        "resourceGroups": {
+            "region1Green": "[concat(parameters('prefix'), '-mav-pri-grn-rg')]",
+            "region2Green": "[concat(parameters('prefix'), '-mav-sec-grn-rg')]",
+            "region1Blue": "[concat(parameters('prefix'), '-mav-pri-blu-rg')]"
+        },
+
+        "functionApps": [
+            { 
+                "name": "[concat(parameters('prefix'), '-mav-pri-grn-fap')]",
+                "resourceGroup": "[variables('resourceGroups').region1Green]",
+                "depency": "[variables('appServicePlanName')]"
+            },
+            { 
+                "name": "[concat(parameters('prefix'), '-mav-sec-grn-fap')]",
+                "resourceGroup": "[variables('resourceGroups').region2Green]",
+                "depency": "[variables('appServicePlanName')]"
+            },
+            { 
+                "name": "[concat(parameters('prefix'), '-mav-pri-blu-fap')]",
+                "resourceGroup": "[variables('resourceGroups').region1Blue]",
+                "depency": "[variables('appServicePlanName')]"
+            }
+        ],
+
+        "cdns": [
+            { 
+                "name": "[concat(parameters('prefix'), '-mav-pri-grn-cpd')]",
+                "sku": "Standard_Akamai",
+                "resourceGroup": "[variables('resourceGroups').region1Green]"
+            },
+            { 
+                "name": "[concat(parameters('prefix'), '-mav-sec-grn-cpd')]",
+                "sku": "Standard_Akamai",
+                "resourceGroup": "[variables('resourceGroups').region2Green]"
+            },
+            { 
+                "name": "[concat(parameters('prefix'), '-mav-pri-blu-cpd')]",
+                "sku": "Standard_Akamai",
+                "resourceGroup": "[variables('resourceGroups').region1Blue]"
+            }
+        ],
+
+        "eventGridTopics": [
+            {
+                "name": "[concat(parameters('prefix'), '-mav-pri-grn-egt')]",
+                "resourceGroup": "[variables('resourceGroups').region1Green]"
+            },
+            {
+                "name": "[concat(parameters('prefix'), '-mav-sec-grn-egt')]",
+                "resourceGroup": "[variables('resourceGroups').region2Green]"
+            },
+            {
+                "name": "[concat(parameters('prefix'), '-mav-pri-blu-egt')]",
+                "resourceGroup": "[variables('resourceGroups').region1Blue]"
+            }
+        ],
+
+        "logicApps": [
+            {
+                "name": "ghr-dev-mmp-tst-cim-sle-mav-v1-offsngcarhul-get-pri-grn-lap",
+                "resourceGroup": "[variables('resourceGroups').region1Green]"
+            },
+            {
+                "name": "ghr-dev-mmp-tst-cim-sle-mav-v1-offsngcarhul-pst-pri-grn-lap",
+                "resourceGroup": "[variables('resourceGroups').region1Green]"
+            },
+            {
+                "name": "ghr-dev-mmp-tst-cim-sle-mav-v1-frmsngcarhul-get-pri-grn-lap",
+                "resourceGroup": "[variables('resourceGroups').region1Green]"
+            },
+            {
+                "name": "ghr-dev-mmp-tst-cim-sle-mav-v1-frmsngcarhul-pst-pri-grn-lap",
+                "resourceGroup": "[variables('resourceGroups').region1Green]"
+            },
+            {
+                "name": "ghr-dev-mmp-tst-cim-sle-mav-v1-cimsngcarhul-get-pri-grn-lap",
+                "resourceGroup": "[variables('resourceGroups').region1Green]"
+            },
+            {
+                "name": "ghr-dev-mmp-tst-cim-sle-mav-v1-cimsngcarhul-pst-pri-grn-lap",
+                "resourceGroup": "[variables('resourceGroups').region1Green]"
+            },
+
+            {
+                "name": "ghr-dev-mmp-tst-ceb-sle-mav-v1-offsngcarhul-get-pri-grn-lap",
+                "resourceGroup": "[variables('resourceGroups').region1Green]"
+            },
+            {
+                "name": "ghr-dev-mmp-tst-ceb-sle-mav-v1-offsngcarhul-pst-pri-grn-lap",
+                "resourceGroup": "[variables('resourceGroups').region1Green]"
+            },
+            {
+                "name": "ghr-dev-mmp-tst-ceb-sle-mav-v1-frmsngcarhul-get-pri-grn-lap",
+                "resourceGroup": "[variables('resourceGroups').region1Green]"
+            },
+            {
+                "name": "ghr-dev-mmp-tst-ceb-sle-mav-v1-frmsngcarhul-pst-pri-grn-lap",
+                "resourceGroup": "[variables('resourceGroups').region1Green]"
+            },
+            {
+                "name": "ghr-dev-mmp-tst-ceb-sle-mav-v1-cebsngcarhul-get-pri-grn-lap",
+                "resourceGroup": "[variables('resourceGroups').region1Green]"
+            },
+            {
+                "name": "ghr-dev-mmp-tst-ceb-sle-mav-v1-cebsngcarhul-pst-pri-grn-lap",
+                "resourceGroup": "[variables('resourceGroups').region1Green]"
+            },
+            {
+                "name": "ghr-dev-mmp-tst-ceb-sle-mav-v1-frmsngcarhul-any-pri-grn-lap",
+                "resourceGroup": "[variables('resourceGroups').region1Green]"
+            },
+            {
+                "name": "ghr-dev-mmp-tst-ceb-sle-mav-v1-cebsngcarhul-any-pri-grn-lap",
+                "resourceGroup": "[variables('resourceGroups').region1Green]"
+            },
+        ],
+
+
+        "derivedIds": {
+            "appServicePlanId": "[concat('/subscriptions/', subscription().id, '/resourceGroups/', variables('appServicePlanResourceGroupName'), '/providers/Microsoft.Web/serverfarms/', variables('appServicePlanName'))]"
+        },
+        
+
+        "appServicePlanResourceGroupName": "[concat(parameters('prefix'), '-rg')]",
+        "appServicePlanName": "[concat(parameters('prefix'), '-asp')]",
+        "storageAccountResourceGroupName": "[concat(parameters('prefix'), '-rg')]",
+        "storageAccountName": "[concat(replace(parameters('prefix'),'-', ''), 'asa')]"
+    },
+    "resources": [
+        {
+            "name": "[variables('appServicePlanName')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2017-05-10",
+            "comments": "This resource will create an App Service Plan",
+            "resourceGroup": "[variables('appServicePlanResourceGroupName')]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('artifacts').appServicePlanUrl]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "name": {
+                        "value": "[variables('appServicePlanName')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "[variables('storageAccountName')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2017-05-10",
+            "comments": "This resource will create a Storage Account",
+            "resourceGroup": "[variables('storageAccountResourceGroupName')]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('artifacts').storageAccountUrl]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "name": {
+                        "value": "[variables('storageAccountName')]"
+                    },
+                    "sku": {
+                        "value": "Standard_GRS"
+                    }
+                }
+            }
+        },
+        {
+            "name": "[variables('functionApps')[copyIndex()].name]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2017-05-10",
+            "comments": "This resource will create a FunctionApp",
+            "copy": {
+                "name": "FunctionAppLoop",
+                "count": "[length(variables('functionApps'))]"
+            },
+            "resourceGroup": "[variables('functionApps')[copyIndex()].resourceGroup]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('artifacts').functionAppUrl]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "name": {
+                        "value": "[variables('functionApps')[copyIndex()].name]"
+                    },
+                    "appServicePlan": {
+                        "value": "[variables('derivedIds').appServicePlanId]"
+                    }
+                }
+            },
+            "dependsOn": [
+                "[variables('functionApps')[copyIndex()].depency]"
+            ]
+        },
+        {
+            "name": "[variables('cdns')[copyIndex()].name]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2017-05-10",
+            "comments": "This resource will create a CDN",
+            "copy": {
+                "name": "CDNSLoop",
+                "count": "[length(variables('cdns'))]"
+            },
+            "resourceGroup": "[variables('cdns')[copyIndex()].resourceGroup]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('artifacts').cdnUrl]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "name": {
+                        "value": "[variables('cdns')[copyIndex()].name]"
+                    },
+                    "sku": {
+                        "value": "[variables('cdns')[copyIndex()].sku]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "[variables('eventGridTopics')[copyIndex()].name]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2017-05-10",
+            "comments": "This resource will create an Event Grid Topic",
+            "copy": {
+                "name": "CDNSLoop",
+                "count": "[length(variables('eventGridTopics'))]"
+            },
+            "resourceGroup": "[variables('eventGridTopics')[copyIndex()].resourceGroup]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('artifacts').eventGridTopicUrl]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "name": {
+                        "value": "[variables('eventGridTopics')[copyIndex()].name]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "[variables('logicApps')[copyIndex()].name]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2017-05-10",
+            "comments": "This resource will create a Logic App",
+            "copy": {
+                "name": "LogicAppsLoop",
+                "count": "[length(variables('logicApps'))]"
+            },
+            "resourceGroup": "[variables('logicApps')[copyIndex()].resourceGroup]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('artifacts').logicAppUrl]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "name": {
+                        "value": "[variables('logicApps')[copyIndex()].name]"
+                    }
+                }
+            }
+        }
+    ]
+}

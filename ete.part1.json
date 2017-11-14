@@ -1,0 +1,342 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "param0": {
+            "type": "string"
+        },
+
+        "param1": {
+            "type": "string"
+        },
+
+        "param2": {
+            "type": "string"
+        },
+
+        "param3": {
+            "type": "string"
+        },
+
+        "param4": {
+            "type": "string"
+        },
+
+        "param5": {
+            "type": "string"
+        },
+
+        "param6": {
+            "type": "string"
+        },
+
+        "param7": {
+            "type": "string"
+        },
+
+        "templatesBaseUrl": {
+            "type": "string",
+            "metadata": {
+                "description": "Linked Templates base url"
+            },
+            "defaultValue": "https://raw.githubusercontent.com/t-haunzwickl/arm/master/nestedtemplates/"
+        }
+    },
+    "variables": {
+        "prefix": "[concat(parameters('param0'), '-', parameters('param1'), '-', parameters('param2'), '-', parameters('param3'), '-', parameters('param4'), '-', parameters('param5'))]",
+        "prefix_full": "[concat(variables('prefix'), '-', parameters('param6'))]",
+
+        "artifacts": {
+            "appServicePlanUrl": "[concat(parameters('templatesBaseUrl'), '/appServicePlan.json')]",
+            "cdnUrl": "[concat(parameters('templatesBaseUrl'), '/cdn.json')]",
+            "cdnEndpointUrl": "[concat(parameters('templatesBaseUrl'), '/cdnEndpoint.json')]",
+            "serviceBusUrl": "[concat(parameters('templatesBaseUrl'), '/serviceBus.json')]",
+            "webAppUrl": "[concat(parameters('templatesBaseUrl'), '/webApp.json')]"            
+        },
+              
+        "resourceGroups": {
+            "region1Green": "[concat(variables('prefix_full'), '-pri-grn-rg')]",
+            "region2Green": "[concat(variables('prefix_full'), '-sec-grn-rg')]",
+            "region1Blue": "[concat(variables('prefix_full'), '-pri-blu-rg')]"
+        },
+
+        "appServicePlans": [
+            { 
+                "name": "[concat(variables('prefix'), '-pri-asp')]",
+                "resourceGroup": "[concat(variables('prefix'), '-pri-rg')]"
+            },
+            { 
+                "name": "[concat(variables('prefix'), '-sec-asp')]",
+                "resourceGroup": "[concat(variables('prefix'), '-sec-rg')]"
+            }
+        ],
+
+        "webApps": [
+            { 
+                "name": "[concat(variables('prefix_full'), '-pri-grn-wap')]",
+                "resourceGroup": "[variables('resourceGroups').region1Green]",
+                "vstsOrganization": "[parameters('param7')]",
+                "repository": "[concat(parameters('param0'), '-', parameters('param4'), '-', parameters('param5'))]",
+                "branch": "[concat(parameters('param1'), '-', parameters('param2'), '-', parameters('param3'), '-', parameters('param6'), '-grn')]",
+                "appServicePlanId": "[concat('/subscriptions/', subscription().id, '/resourceGroups/', concat(variables('prefix'), '-pri-rg'), '/providers/Microsoft.Web/serverfarms/', concat(variables('prefix'), '-pri-asp'))]",
+                "depency": "[concat(variables('prefix'), '-pri-asp')]"
+            },
+            { 
+                "name": "[concat(variables('prefix_full'), '-sec-grn-wap')]",
+                "resourceGroup": "[variables('resourceGroups').region2Green]",
+                "vstsOrganization": "[parameters('param7')]",
+                "repository": "[concat(parameters('param0'), '-', parameters('param4'), '-', parameters('param5'))]",
+                "branch": "[concat(parameters('param1'), '-', parameters('param2'), '-', parameters('param3'), '-', parameters('param6'), '-grn')]",
+                "appServicePlanId": "[concat('/subscriptions/', subscription().id, '/resourceGroups/', concat(variables('prefix'), '-sec-rg'), '/providers/Microsoft.Web/serverfarms/', concat(variables('prefix'), '-sec-asp'))]",
+                "depency": "[concat(variables('prefix'), '-sec-asp')]"
+            },
+            { 
+                "name": "[concat(variables('prefix_full'), '-pri-blu-wap')]",
+                "resourceGroup": "[variables('resourceGroups').region1Blue]",
+                "vstsOrganization": "[parameters('param7')]",
+                "repository": "[concat(parameters('param0'), '-', parameters('param4'), '-', parameters('param5'))]",
+                "branch": "[concat(parameters('param1'), '-', parameters('param2'), '-', parameters('param3'), '-', parameters('param6'), '-blu')]",
+                "appServicePlanId": "[concat('/subscriptions/', subscription().id, '/resourceGroups/', concat(variables('prefix'), '-pri-rg'), '/providers/Microsoft.Web/serverfarms/', concat(variables('prefix'), '-pri-asp'))]",
+                "depency": "[concat(variables('prefix'), '-pri-asp')]"
+            }
+        ],
+
+        "serviceBusses": [
+            { 
+                "name": "[concat(variables('prefix_full'), '-pri-grn-svb')]",
+                "queueName": "[concat(variables('prefix_full'), '-pri-grn-sbq')]",
+                "topicName": "[concat(variables('prefix_full'), '-pri-grn-sbt')]",
+                "resourceGroup": "[variables('resourceGroups').region1Green]"
+            },
+            { 
+                "name": "[concat(variables('prefix_full'), '-sec-grn-svb')]",
+                "queueName": "[concat(variables('prefix_full'), '-sec-grn-sbq')]",
+                "topicName": "[concat(variables('prefix_full'), '-sec-grn-sbt')]",
+                "resourceGroup": "[variables('resourceGroups').region2Green]"
+            },
+            { 
+                "name": "[concat(variables('prefix_full'), '-pri-blu-svb')]",
+                "queueName": "[concat(variables('prefix_full'), '-pri-blu-sbq')]",
+                "topicName": "[concat(variables('prefix_full'), '-pri-blu-sbt')]",
+                "resourceGroup": "[variables('resourceGroups').region1Blue]"
+            }
+        ],
+
+        "cdns": [
+            { 
+                "name": "[concat(variables('prefix_full'), '-pri-grn-cps')]",
+                "sku": "Premium_Verizon",
+                "resourceGroup": "[variables('resourceGroups').region1Green]"
+            },
+            { 
+                "name": "[concat(variables('prefix_full'), '-pri-grn-cpd')]",
+                "sku": "Standard_Akamai",
+                "resourceGroup": "[variables('resourceGroups').region1Green]"
+            },
+            { 
+                "name": "[concat(variables('prefix_full'), '-sec-grn-cps')]",
+                "sku": "Premium_Verizon",
+                "resourceGroup": "[variables('resourceGroups').region2Green]"
+            },
+            { 
+                "name": "[concat(variables('prefix_full'), '-sec-grn-cpd')]",
+                "sku": "Standard_Akamai",
+                "resourceGroup": "[variables('resourceGroups').region2Green]"
+            },
+            { 
+                "name": "[concat(variables('prefix_full'), '-pri-blu-cps')]",
+                "sku": "Premium_Verizon",
+                "resourceGroup": "[variables('resourceGroups').region1Blue]"
+            },
+            { 
+                "name": "[concat(variables('prefix_full'), '-pri-blu-cpd')]",
+                "sku": "Standard_Akamai",
+                "resourceGroup": "[variables('resourceGroups').region1Blue]"
+            }
+        ],
+
+        "cdnEndpoints": [
+            {
+                "name": "[concat(variables('prefix_full'), '-pri-grn-ces')]",
+                "cdnName": "[concat(variables('prefix_full'), '-pri-grn-cps')]",
+                "siteName": "[concat(variables('prefix_full'), '-pri-grn-wap')]",
+                "originPath": "/stat",
+                "optimizationType": "GeneralWebDelivery",
+                "probePath": "",
+                "resourceGroup": "[variables('resourceGroups').region1Green]",
+                "depency": "[concat(variables('prefix_full'), '-pri-grn-cps')]"
+            },
+            {
+                "name": "[concat(variables('prefix_full'), '-pri-blu-ces')]",
+                "cdnName": "[concat(variables('prefix_full'), '-pri-blu-cps')]",
+                "siteName": "[concat(variables('prefix_full'), '-pri-blu-wap')]",
+                "originPath": "/stat",
+                "optimizationType": "GeneralWebDelivery",
+                "probePath": "",
+                "resourceGroup": "[variables('resourceGroups').region1Blue]",
+                "depency": "[concat(variables('prefix_full'), '-pri-blu-cps')]"
+            }
+        ]
+    },
+    "resources": [
+        {
+            "name": "[variables('appServicePlans')[copyIndex()].name]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2017-05-10",
+            "comments": "This resource will create an App Service Plan",
+            "copy": {
+                "name": "AppServicePlansLoop",
+                "count": "[length(variables('appServicePlans'))]"
+            },
+            "resourceGroup": "[variables('appServicePlans')[copyIndex()].resourceGroup]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('artifacts').appServicePlanUrl]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "name": {
+                        "value": "[variables('appServicePlans')[copyIndex()].name]"
+                    }
+                }
+            }
+        },
+
+        /* WebApp */
+        {
+            "name": "[variables('webApps')[copyIndex()].name]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2017-05-10",
+            "comments": "This resource will create a WebApp",
+            "copy": {
+                "name": "WebAppLoop",
+                "count": "[length(variables('webApps'))]"
+            },
+            "resourceGroup": "[variables('webApps')[copyIndex()].resourceGroup]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('artifacts').webAppUrl]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "name": {
+                        "value": "[variables('webApps')[copyIndex()].name]"
+                    },
+                    "appServicePlan": {
+                        "value": "[variables('webApps')[copyIndex()].appServicePlanId]"
+                    },
+                    "vstsOrganization": {
+                        "value": "[variables('webApps')[copyIndex()].vstsOrganization]"
+                    },
+                    "repository": {
+                        "value": "[variables('webApps')[copyIndex()].repository]"
+                    },
+                    "branch": {
+                        "value": "[variables('webApps')[copyIndex()].branch]"
+                    }
+                }
+            },
+            "dependsOn": [
+                "[variables('webApps')[copyIndex()].depency]"
+            ]
+        },
+        {
+            "name": "[variables('serviceBusses')[copyIndex()].name]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2017-05-10",
+            "comments": "This resource will create a Service Bus, Service Topic and Service Queue",
+            "copy": {
+                "name": "ServiceBussesLoop",
+                "count": "[length(variables('webApps'))]"
+            },
+            "resourceGroup": "[variables('serviceBusses')[copyIndex()].resourceGroup]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('artifacts').serviceBusUrl]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "name": {
+                        "value": "[variables('serviceBusses')[copyIndex()].name]"
+                    },
+                    "serviceBusTopicName": {
+                        "value": "[variables('serviceBusses')[copyIndex()].topicName]"
+                    },
+                    "serviceBusQueueName": {
+                        "value": "[variables('serviceBusses')[copyIndex()].queueName]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "[variables('cdns')[copyIndex()].name]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2017-05-10",
+            "comments": "This resource will create a CDN",
+            "copy": {
+                "name": "CDNSLoop",
+                "count": "[length(variables('cdns'))]"
+            },
+            "resourceGroup": "[variables('cdns')[copyIndex()].resourceGroup]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('artifacts').cdnUrl]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "name": {
+                        "value": "[variables('cdns')[copyIndex()].name]"
+                    },
+                    "sku": {
+                        "value": "[variables('cdns')[copyIndex()].sku]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "[variables('cdnEndpoints')[copyIndex()].name]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2017-05-10",
+            "comments": "This resource will create a CDN-Endpoint",
+            "copy": {
+                "name": "CDNEndpointsLoop",
+                "count": "[length(variables('cdnEndpoints'))]"
+            },
+            "resourceGroup": "[variables('cdnEndpoints')[copyIndex()].resourceGroup]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('artifacts').cdnEndpointUrl]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "name": {
+                        "value": "[variables('cdnEndpoints')[copyIndex()].name]"
+                    },
+                    "cdnEndpointName": {
+                        "value": "[variables('cdnEndpoints')[copyIndex()].cdnName]"
+                    },
+                    "siteName": {
+                        "value": "[variables('cdnEndpoints')[copyIndex()].siteName]"
+                    },
+                    "originPath": {
+                        "value": "[variables('cdnEndpoints')[copyIndex()].originPath]"
+                    },
+                    "optimizationType": {
+                        "value": "[variables('cdnEndpoints')[copyIndex()].optimizationType]"
+                    },
+                    "probePath": {
+                        "value": "[variables('cdnEndpoints')[copyIndex()].probePath]"
+                    }
+                }
+            },
+            "dependsOn": [
+                "[variables('cdnEndpoints')[copyIndex()].depency]"
+            ]
+        }
+    ]
+}

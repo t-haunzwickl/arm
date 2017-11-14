@@ -1,0 +1,76 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "param0": {
+            "type": "string"
+        },
+
+        "param1": {
+            "type": "string"
+        },
+
+        "param2": {
+            "type": "string"
+        },
+
+        "param3": {
+            "type": "string"
+        },
+
+        "param4": {
+            "type": "string"
+        },
+
+        "param5": {
+            "type": "string"
+        },
+
+        "param6": {
+            "type": "string"
+        },
+
+        "templatesBaseUrl": {
+            "type": "string",
+            "metadata": {
+                "description": "Linked Templates base url"
+            },
+            "defaultValue": "https://raw.githubusercontent.com/t-haunzwickl/arm/master/nestedtemplates/"
+        }
+    },
+    "variables": {
+
+        "prefix": "[concat(parameters('param0'), '-', parameters('param1'), '-', parameters('param2'), '-', parameters('param3'), '-', parameters('param4'), '-', parameters('param5'))]",
+
+        "artifacts": {
+            "storageAccountUrl": "[concat(parameters('templatesBaseUrl'), '/storageAccount.json')]"
+        },
+              
+        "storageAccountResourceGroupName": "[concat(variables('prefix'), '-rg')]",
+        "storageAccountName": "[concat(replace(variables('prefix'),'-', ''), 'asa')]"
+    },
+    "resources": [       
+        {
+            "name": "[variables('storageAccountName')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2017-05-10",
+            "comments": "This resource will create a Storage Account",
+            "resourceGroup": "[variables('storageAccountResourceGroupName')]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('artifacts').storageAccountUrl]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "name": {
+                        "value": "[variables('storageAccountName')]"
+                    },
+                    "sku": {
+                        "value": "Standard_GRS"
+                    }
+                }
+            }
+        }
+    ]
+}
